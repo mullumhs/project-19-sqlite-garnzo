@@ -1,28 +1,47 @@
 import sqlite3
 
 def create_connection():
-    conn = create_connection('my_movie_collection.db')
+    conn = sqlite3.connect('my_movie_collection.db')
     return conn
     
 def create_table(conn):
-    conn = create_connection()
-    # TODO: Create the movies table
-    pass
+    cursor = conn.cursor()
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS movies (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        director TEXT,
+        year INTEGER,
+        rating FLOAT      
+    )
+    ''')
+    conn.commit()
 
 def add_movie(conn, title, director, year, rating):
-    
-    # TODO: Insert a new movie into the database
-    pass
+    cursor = conn.cursor()
+    cursor.execute('''
+    INSERT INTO movies (title, director, year, rating)
+    VALUES (?, ?, ?, ?)
+    ''', (title, director, year, rating))
+    conn.commit()
 
 def display_all_movies(conn):
-    
-    # TODO: Select and display all movies
-    pass
+    cursor = conn.cursor()
+    cursor.execute('''SELECT * FROM movies''')
+    all_movies = cursor.fetchall()
+    print("Movies Database:")
+    for movie in all_movies:
+        print(movie)
+        conn.commit()
 
 def update_movie_rating(conn, title, new_rating):
-    
-    # TODO: Update the rating of a specified movie
-    pass
+    cursor = conn.cursor()
+    cursor.execute(f'''
+    UPDATE movies
+    set rating = {new_rating}
+    WHERE title = {title}
+    ''')
+    conn.commit()
 
 def delete_movie(conn, title):
     
