@@ -4,6 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///movies.db'
 db = SQLAlchemy(app)
+conn = SQLAlchemy.connect('movies.db')
+cursor = conn.cursor()
 
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,6 +21,9 @@ with app.app_context():
 def index():
     movies = Movie.query.all()
     return render_template('index.html', movies=movies)
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 @app.route('/add', methods=['GET', 'POST'])
 def add_movie():
@@ -53,5 +58,3 @@ def delete_movie(id):
     db.session.commit()
     return redirect(url_for('index'))
 
-if __name__ == '__main__':
-    app.run(debug=True)
